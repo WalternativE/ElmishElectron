@@ -1,0 +1,18 @@
+source https://nuget.org/api/v2
+storage:none
+
+clitool dotnet-fable
+nuget Fable.Core
+nuget Fable.Import.Browser
+nuget Fable.Import.Node
+nuget FSharp.Core
+nuget Fable.Elmish
+nuget Fable.Elmish.React
+nuget Fable.Elmish.Browser
+nuget Fable.Elmish.Debugger
+nuget Fable.Elmish.HMR
+
+group Build
+source https://nuget.org/api/v2
+
+nuget FAKE
