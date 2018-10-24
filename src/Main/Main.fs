@@ -2,19 +2,20 @@
 
 open Fable.Core.JsInterop
 open Fable.Import
-open Electron
 open Node.Exports
+open Electron
+open Electron.Electron
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mutable mainWindow: BrowserWindow option = Option.None
 
 let createMainWindow () =
-    let options = createEmpty<BrowserWindowOptions>
+    let options = createEmpty<BrowserWindowConstructorOptions>
     options.width <- Some 800.
     options.height <- Some 600.
     options.autoHideMenuBar <- Some true
-    let window = electron.BrowserWindow.Create(options)
+    let window = Electron.BrowserWindow.Create(options)
 
     // Load the index.html of the app.
     let opts = createEmpty<Node.Url.Url<obj>>
@@ -33,21 +34,23 @@ let createMainWindow () =
     // Maximize the window
     window.maximize()
 
+    window.webContents.openDevTools()
+
     mainWindow <- Some window
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-electron.app.on("ready", unbox createMainWindow) |> ignore
+Electron.app.on("ready", unbox createMainWindow) |> ignore
 
 // Quit when all windows are closed.
-electron.app.on("window-all-closed", unbox(fun () ->
+Electron.app.on("window-all-closed", unbox(fun () ->
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if Node.Globals.``process``.platform <> Node.Base.NodeJS.Darwin then
-        electron.app.quit()
+        Electron.app.quit()
 )) |> ignore
 
-electron.app.on("activate", unbox(fun () ->
+Electron.app.on("activate", unbox(fun () ->
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if mainWindow.IsNone then

@@ -10,7 +10,6 @@ type GlobalEvent =
     Event
 
 module Electron =
-
     type [<AllowNullLiteral>] IExports =
         abstract EventEmitter: EventEmitterStatic
         abstract Accelerator: AcceleratorStatic
@@ -5241,3 +5240,6 @@ module NodeJS =
     type [<AllowNullLiteral>] ProcessVersions =
         abstract electron: string with get, set
         abstract chrome: string with get, set
+
+[<Import("*", "electron")>]
+let Electron : Electron.IExports = jsNative

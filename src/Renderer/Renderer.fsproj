@@ -5,5 +5,10 @@
   <ItemGroup>
     <Compile Include="Renderer.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FsReactstrap\FsReactstrap.fsproj">
+      <Name>FsElectron.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

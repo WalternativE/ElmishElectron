@@ -5,6 +5,7 @@ clitool dotnet-fable
 nuget Fable.Core
 nuget Fable.Import.Browser
 nuget Fable.Import.Node
+nuget Fable.React
 nuget FSharp.Core
 nuget Fable.Elmish
 nuget Fable.Elmish.React

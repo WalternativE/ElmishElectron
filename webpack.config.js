@@ -7,12 +7,12 @@ function resolve(filePath) {
 
 var babelOptions = {
   presets: [
-      ["@babel/preset-env", {
-          "targets": {
-              "browsers": ["last 2 versions"]
-          },
-          "modules": false
-      }]
+    ["@babel/preset-env", {
+      "targets": {
+        "browsers": ["last 2 versions"]
+      },
+      "modules": false
+    }]
   ]
 };
 
@@ -44,6 +44,13 @@ var basicConfig = {
           loader: 'babel-loader',
           options: babelOptions
         },
+      },
+      {
+        test: /\.css$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" }
+        ]
       }
     ]
   }
