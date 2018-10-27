@@ -53,26 +53,33 @@ var basicConfig = {
         ]
       }
     ]
-  },
-  mode: 'development',
-  devServer: {
-    hot: true,
-    inline: true,
-    port: 9000,
-    contentBase: './app'
-  },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin()
-  ]
+  }
 };
 
-// var mainConfig = Object.assign({
-//   name: "mainConfig",
-//   target: "electron-main",
-//   entry: resolve("src/Main/Main.fsproj"),
+if (!isProduction) {
+  basicConfig = Object.assign({
+    mode: 'development',
+    watch: true
+  }, basicConfig);
+}
+
+var mainConfig = Object.assign({
+  name: "mainConfig",
+  target: "electron-main",
+  entry: resolve("src/Main/Main.fsproj"),
+  output: {
+    path: resolve("app"),
+    filename: "main.js"
+  }
+}, basicConfig);
+
+// var rendererConfig = Object.assign({
+//   name: "rendererConfig",
+//   target: "electron-renderer",
+//   entry: resolve("src/Renderer/Renderer.fsproj"),
 //   output: {
 //     path: resolve("app"),
-//     filename: "main.js"
+//     filename: "renderer.js"
 //   }
 // }, basicConfig);
 
@@ -88,17 +95,7 @@ var basicConfig = {
 //     plugins: [
 //       new webpack.HotModuleReplacementPlugin()
 //     ]
-//   }, basicConfig);
+//   }, rendererConfig)
 // }
 
-var rendererConfig = Object.assign({
-  name: "rendererConfig",
-  target: "electron-renderer",
-  entry: resolve("src/Renderer/Renderer.fsproj"),
-  output: {
-    path: resolve("app"),
-    filename: "renderer.js"
-  }
-}, basicConfig);
-
-module.exports = rendererConfig;
+module.exports = mainConfig;

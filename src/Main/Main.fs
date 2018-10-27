@@ -1,5 +1,6 @@
 ﻿module Main
 
+open Fable.Core
 open Fable.Core.JsInterop
 open Fable.Import
 open Node.Exports
@@ -17,11 +18,15 @@ let createMainWindow () =
     options.autoHideMenuBar <- Some true
     let window = Electron.BrowserWindow.Create(options)
 
+    #if RELEASE
     // Load the index.html of the app.
     let opts = createEmpty<Node.Url.Url<obj>>
     opts.pathname <- Some <| path.join(Node.Globals.__dirname, "index.html")
     opts.protocol <- Some "file:"
     window.loadURL(url.format(opts))
+    #else
+    window.loadURL("http://localhost:9000/index.html")
+    #endif
 
     // Emitted when the window is closed.
     window.on("closed", unbox(fun () ->
@@ -34,7 +39,10 @@ let createMainWindow () =
     // Maximize the window
     window.maximize()
 
+    #if RELEASE
+    #else
     window.webContents.openDevTools()
+    #endif
 
     mainWindow <- Some window
 
