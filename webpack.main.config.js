@@ -73,29 +73,4 @@ var mainConfig = Object.assign({
   }
 }, basicConfig);
 
-// var rendererConfig = Object.assign({
-//   name: "rendererConfig",
-//   target: "electron-renderer",
-//   entry: resolve("src/Renderer/Renderer.fsproj"),
-//   output: {
-//     path: resolve("app"),
-//     filename: "renderer.js"
-//   }
-// }, basicConfig);
-
-// if (!isProduction) {
-//   basicConfig = Object.assign({
-//     mode: 'development',
-//     devServer: {
-//       hot: true,
-//       inline: true,
-//       port: 9000,
-//       contentBase: './app'
-//     },
-//     plugins: [
-//       new webpack.HotModuleReplacementPlugin()
-//     ]
-//   }, rendererConfig)
-// }
-
 module.exports = mainConfig;

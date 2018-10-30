@@ -66,31 +66,6 @@ var basicConfig = {
   ]
 };
 
-// var mainConfig = Object.assign({
-//   name: "mainConfig",
-//   target: "electron-main",
-//   entry: resolve("src/Main/Main.fsproj"),
-//   output: {
-//     path: resolve("app"),
-//     filename: "main.js"
-//   }
-// }, basicConfig);
-
-// if (!isProduction) {
-//   basicConfig = Object.assign({
-//     mode: 'development',
-//     devServer: {
-//       hot: true,
-//       inline: true,
-//       port: 9000,
-//       contentBase: './app'
-//     },
-//     plugins: [
-//       new webpack.HotModuleReplacementPlugin()
-//     ]
-//   }, basicConfig);
-// }
-
 var rendererConfig = Object.assign({
   name: "rendererConfig",
   target: "electron-renderer",
