@@ -3,9 +3,24 @@
 open Fable.Core
 open Fable.Core.JsInterop
 open Fable.Import
-open Node.Exports
 open Electron
 open Electron.Electron
+open Fable.PowerPack
+
+type ExtensionReference =
+    { id : string
+      electron : string }
+
+type InstallExtension = (U2<ExtensionReference, ExtensionReference array> -> JS.Promise<string>)
+
+[<Import("REACT_DEVELOPER_TOOLS", "electron-devtools-installer")>]
+let reactDeveloperTools : ExtensionReference = jsNative
+
+[<Import("REDUX_DEVTOOLS", "electron-devtools-installer")>]
+let reduxDeveloperTools : ExtensionReference = jsNative
+
+let installExtension = importDefault<InstallExtension> "electron-devtools-installer"
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -41,7 +56,17 @@ let createMainWindow () =
 
     #if RELEASE
     #else
-    window.webContents.openDevTools()
+    installExtension !![| reactDeveloperTools; reduxDeveloperTools |]
+    |> Promise.either
+        (fun name ->
+            printfn "Installed %s" name
+            window.webContents.openDevTools()
+            !!())
+        (fun err ->
+            printfn "Error happend"
+            printfn "%A" err
+            !!())
+    |> Promise.start
     #endif
 
     mainWindow <- Some window

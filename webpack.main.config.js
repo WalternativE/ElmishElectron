@@ -22,7 +22,7 @@ console.log("Bundling for " + (isProduction ? "production" : "development") + ".
 var basicConfig = {
   devtool: "source-map",
   node: {
-    __dirname: false,
+    __dirname: true,
     __filename: false
   },
   module: {

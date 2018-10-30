@@ -12,6 +12,7 @@ nuget Fable.Elmish.React
 nuget Fable.Elmish.Browser
 nuget Fable.Elmish.Debugger
 nuget Fable.Elmish.HMR
+nuget Fable.PowerPack
 
 group Build
 source https://nuget.org/api/v2

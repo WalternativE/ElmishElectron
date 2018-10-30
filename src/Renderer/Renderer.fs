@@ -2,7 +2,6 @@
 
 open Elmish
 open Elmish.React
-open Elmish.HMR
 open Fable.Core.JsInterop
 open Fable.Import.React
 
@@ -38,6 +37,9 @@ let increase (dispatch : Message -> unit) (event : MouseEvent) : unit =
     printfn "We do an increase"
     dispatch Increase
 
+let counterView =
+    lazyView (fun model -> RS.badge [ RSP.Color(RSP.Dark); RSP.Pill true ] [ R.str (sprintf "%i" model.Count) ])
+
 let view (model : Model) (dispatch : Message -> unit) =
     RS.container [ RSP.Fluid(true) ] [
         RS.alert
@@ -55,7 +57,7 @@ let view (model : Model) (dispatch : Message -> unit) =
         ]
         R.h1 [] [
             R.str "The count is "
-            RS.badge [ RSP.Color(RSP.Dark); RSP.Pill true ] [ R.str (sprintf "%i" model.Count) ]
+            counterView model
         ]
         R.br []
         RS.button [ RP.OnClick (increase dispatch); RSP.Color(RSP.Primary) ] [ R.str "Increase" ]
@@ -65,8 +67,18 @@ let view (model : Model) (dispatch : Message -> unit) =
         RS.button [ RP.OnClick (fun _ -> dispatch ShowAlert) ; RSP.Color(RSP.Success) ] [ R.str "Show Alert" ]
     ]
 
+#if DEBUG
+open Elmish.HMR
+open Elmish.Debug
+#endif
+
 Program.mkSimple init update view
+#if DEBUG
 |> Program.withHMR
+|> Program.withDebugger
+#endif
 |> Program.withReact "app"
+#if DEBUG
 |> Program.withConsoleTrace
+#endif
 |> Program.run
