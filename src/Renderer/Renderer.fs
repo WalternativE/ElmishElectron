@@ -8,18 +8,26 @@ open Fable.Import.React
 
 importAll "../../node_modules/bootstrap/dist/css/bootstrap.min.css"
 
-type Model = int
+type Model =
+    { Count : int
+      IsAlertVisible : bool }
 
 type Message =
     | Increase
     | Decrease
+    | HideAlert
+    | ShowAlert
 
-let init _ = 42
+let init () =
+    { Count = 42
+      IsAlertVisible = true }
 
 let update (msg : Message) (model : Model) =
     match msg with
-    | Increase -> model + 1
-    | Decrease -> model - 1
+    | Increase -> { model with Count = model.Count + 1 }
+    | Decrease -> { model with Count = model.Count - 1 }
+    | HideAlert -> { model with IsAlertVisible = false }
+    | ShowAlert -> { model with IsAlertVisible = true }
 
 module R = Fable.Helpers.React
 module RP = Fable.Helpers.React.Props
@@ -32,13 +40,29 @@ let increase (dispatch : Message -> unit) (event : MouseEvent) : unit =
 
 let view (model : Model) (dispatch : Message -> unit) =
     RS.container [ RSP.Fluid(true) ] [
-        R.h1 [] [ R.str (sprintf "The count is %i" model) ]
+        RS.alert
+            [ RSP.IsOpen model.IsAlertVisible
+              RSP.Color(RSP.Warning)
+              RSP.Toggle (fun _ -> dispatch HideAlert) ] [
+            R.h4 [ RP.ClassName "alert-heading" ] [
+                R.str "Hi, there! "
+                RS.badge [ RSP.Color(RSP.Danger) ] [ R.str "1337" ]
+            ]
+            R.hr []
+            R.str "This is a warning with "
+            R.a [ RP.Href "#"; RP.ClassName "alert-link" ] [ R.str "a link"]
+            R.str " to click on!"
+        ]
+        R.h1 [] [
+            R.str "The count is "
+            RS.badge [ RSP.Color(RSP.Dark); RSP.Pill true ] [ R.str (sprintf "%i" model.Count) ]
+        ]
         R.br []
         RS.button [ RP.OnClick (increase dispatch); RSP.Color(RSP.Primary) ] [ R.str "Increase" ]
         R.span [] [ R.str " "]
         RS.button [ RP.OnClick (fun _ -> dispatch Decrease); RSP.Color(RSP.Secondary) ] [ R.str "Decrease" ]
         R.span [] [ R.str " "]
-        RS.button [ RSP.Color(RSP.Success) ] [ R.str "Another" ]
+        RS.button [ RP.OnClick (fun _ -> dispatch ShowAlert) ; RSP.Color(RSP.Success) ] [ R.str "Show Alert" ]
     ]
 
 Program.mkSimple init update view
