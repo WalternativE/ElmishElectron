@@ -54,38 +54,41 @@ var basicConfig = {
 };
 
 var mainConfig = Object.assign({
-    watch: isProduction ? false : true,
-    name: "mainConfig",
-    target: "electron-main",
-    entry: resolve("src/Main/Main.fsproj"),
-    output: {
-        path: resolve("app"),
-        filename: "main.js"
-    }
+  watch: isProduction ? false : true,
+  node: {
+    "__dirname": true
+  },
+  name: "mainConfig",
+  target: "electron-main",
+  entry: resolve("src/Main/Main.fsproj"),
+  output: {
+    path: resolve("app"),
+    filename: "main.js"
+  }
 }, basicConfig);
 
 const hmrPlugin = new webpack.HotModuleReplacementPlugin();
 
 var rendererConfig = Object.assign({
-    name: "rendererConfig",
-    target: "electron-renderer",
-    entry: resolve("src/Renderer/Renderer.fsproj"),
-    output: {
-        path: resolve("app"),
-        filename: "renderer.js"
-    },
-    plugins: isProduction ? [] : [ hmrPlugin ]
+  name: "rendererConfig",
+  target: "electron-renderer",
+  entry: resolve("src/Renderer/Renderer.fsproj"),
+  output: {
+    path: resolve("app"),
+    filename: "renderer.js"
+  },
+  plugins: isProduction ? [] : [hmrPlugin]
 }, basicConfig);
 
 if (!isProduction) {
-    rendererConfig = Object.assign({
-        devServer: {
-            hot: true,
-            inline: true,
-            port: 9000,
-            contentBase: resolve("app")
-        }
-    }, rendererConfig);
+  rendererConfig = Object.assign({
+    devServer: {
+      hot: true,
+      inline: true,
+      port: 9000,
+      contentBase: resolve("app")
+    }
+  }, rendererConfig);
 }
 
 module.exports = [mainConfig, rendererConfig];
