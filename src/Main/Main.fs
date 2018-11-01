@@ -13,6 +13,12 @@ type ExtensionReference =
 
 type InstallExtension = (U2<ExtensionReference, ExtensionReference array> -> JS.Promise<string>)
 
+[<Import("*", "fs")>]
+let fs : Node.Fs.IExports = jsNative
+
+[<Import("*", "path")>]
+let path : Node.Path.IExports = jsNative
+
 [<Import("REACT_DEVELOPER_TOOLS", "electron-devtools-installer")>]
 let reactDeveloperTools : ExtensionReference = jsNative
 
@@ -21,11 +27,63 @@ let reduxDeveloperTools : ExtensionReference = jsNative
 
 let installExtension = importDefault<InstallExtension> "electron-devtools-installer"
 
+type IUrl<'a> =
+    inherit JsConstructor<string, Node.Url.Url<'a>>
+
+let url = importMember<Node.Url.Url<string>> "url"
+
+[<Import("URL", "url")>]
+let URL : IUrl<string> = jsNative
+
+let createProtocol (scheme : string) =
+    Electron.protocol.registerBufferProtocol(
+        scheme,
+        (fun req resp ->
+            let url = URL.Create req.url
+            let pathName = JS.decodeURI url.pathname.Value
+
+            let filePath = path.join [| Node.Globals.__dirname; pathName |]
+
+            fs.readFile(
+                filePath,
+                (fun err data ->
+                    match err with
+                    | Some e ->
+                        JS.console.error (sprintf "Failure to read file for scheme %s" scheme)
+                        e.stack
+                        |> Option.iter (fun s -> (JS.console.error (sprintf "Stacktrace:\n%s" s)))
+                    | None ->
+                        let extension = path.extname(pathName).ToLower()
+                        let mimeType =
+                            match extension with
+                            | _ when extension = ".js" -> "text/javascript"
+                            | _ when extension = ".html" -> "text/html"
+                            | _ when extension = ".css" -> "text/css"
+                            | _ when extension = ".svg" || extension = ".svgz" -> "image/svg+xml"
+                            | _ when extension = ".json" -> "application/json"
+                            | _ -> ""
+                        
+                        let mimeTypedBuffer = createEmpty<MimeTypedBuffer>
+                        mimeTypedBuffer.mimeType <- mimeType
+                        mimeTypedBuffer.data <- !!data
+
+                        resp !!mimeTypedBuffer )
+            )
+        ),
+        (fun err ->
+            if err <> null then
+                JS.console.error (sprintf "Failure to register scheme %s: %A" scheme err)
+            else ())
+    )
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mutable mainWindow: BrowserWindow option = Option.None
 
+let options = createEmpty<RegisterStandardSchemesOptions>
+options.secure <- Some true
+
+Electron.protocol.registerStandardSchemes(ResizeArray<_>(["app"]), options)
 let createMainWindow () =
     let options = createEmpty<BrowserWindowConstructorOptions>
     options.width <- Some 800.
@@ -33,14 +91,11 @@ let createMainWindow () =
     options.autoHideMenuBar <- Some true
     let window = Electron.BrowserWindow.Create(options)
 
-    #if RELEASE
-    // Load the index.html of the app.
-    let opts = createEmpty<Node.Url.Url<obj>>
-    opts.pathname <- Some <| path.join(Node.Globals.__dirname, "index.html")
-    opts.protocol <- Some "file:"
-    window.loadURL(url.format(opts))
-    #else
+    #if DEBUG
     window.loadURL("http://localhost:9000/index.html")
+    #else
+    createProtocol "app"
+    window.loadFile("app/index.html")
     #endif
 
     // Emitted when the window is closed.
@@ -54,8 +109,7 @@ let createMainWindow () =
     // Maximize the window
     window.maximize()
 
-    #if RELEASE
-    #else
+    #if DEBUG
     installExtension !![| reactDeveloperTools; reduxDeveloperTools |]
     |> Promise.either
         (fun name ->

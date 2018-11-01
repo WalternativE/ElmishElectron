@@ -1,5 +1,5 @@
-var path = require("path");
-var webpack = require("webpack");
+const path = require("path");
+const webpack = require("webpack");
 
 function resolve(filePath) {
   return path.join(__dirname, filePath)
@@ -20,11 +20,8 @@ var isProduction = process.argv.indexOf("-p") >= 0;
 console.log("Bundling for " + (isProduction ? "production" : "development") + "...");
 
 var basicConfig = {
+  mode: isProduction ? 'production' : 'development',
   devtool: "source-map",
-  node: {
-    __dirname: false,
-    __filename: false
-  },
   module: {
     rules: [
       {
@@ -53,27 +50,42 @@ var basicConfig = {
         ]
       }
     ]
-  },
-  mode: 'development',
-  devServer: {
-    hot: true,
-    inline: true,
-    port: 9000,
-    contentBase: './app'
-  },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin()
-  ]
+  }
 };
 
-var rendererConfig = Object.assign({
-  name: "rendererConfig",
-  target: "electron-renderer",
-  entry: resolve("src/Renderer/Renderer.fsproj"),
-  output: {
-    path: resolve("app"),
-    filename: "renderer.js"
-  }
+var mainConfig = Object.assign({
+    watch: isProduction ? false : true,
+    name: "mainConfig",
+    target: "electron-main",
+    entry: resolve("src/Main/Main.fsproj"),
+    output: {
+        path: resolve("app"),
+        filename: "main.js"
+    }
 }, basicConfig);
 
-module.exports = rendererConfig;
+const hmrPlugin = new webpack.HotModuleReplacementPlugin();
+
+var rendererConfig = Object.assign({
+    name: "rendererConfig",
+    target: "electron-renderer",
+    entry: resolve("src/Renderer/Renderer.fsproj"),
+    output: {
+        path: resolve("app"),
+        filename: "renderer.js"
+    },
+    plugins: isProduction ? [] : [ hmrPlugin ]
+}, basicConfig);
+
+if (!isProduction) {
+    rendererConfig = Object.assign({
+        devServer: {
+            hot: true,
+            inline: true,
+            port: 9000,
+            contentBase: resolve("app")
+        }
+    }, rendererConfig);
+}
+
+module.exports = [mainConfig, rendererConfig];

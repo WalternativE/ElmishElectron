@@ -2,15 +2,23 @@
   "version": "0.1.0",
   "name": "elmish-electron",
   "displayName": "Elmish Electron",
+  "description": "A demo Elmish Electron app",
+  "author": {
+    "name": "Gregor Beyerle",
+    "url": "https://twitter.com/GBeyerle",
+    "email": "gregor.beyerle@gmail.com"
+  },
   "private": true,
   "main": "app/main.js",
   "scripts": {
-    "main": "cd src/Main && dotnet fable webpack --port free -- --mode=development --open --config webpack.main.config.js --config-name mainConfig",
-    "renderer": "cd src/Renderer && dotnet fable webpack-dev-server --mode=development --config webpack.renderer.config.js",
-    "start": "concurrently \"yarn run main\" \"yarn run renderer\"",
+    "main": "cd src/Main && dotnet fable webpack --port free -- --mode=development --open --config webpack.config.js --config-name mainConfig",
+    "renderer": "cd src/Renderer && dotnet fable webpack-dev-server --port free -- --mode=development --config webpack.config.js --config-name rendererConfig",
+    "start": "concurrently \"npm run main\" \"npm run renderer\"",
     "build": "cd src/Main && dotnet fable webpack --port free -- -p --mode=production --config webpack.config.js",
     "launch": "electron .",
-    "release": "electron-packager . --out release --overwrite"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0",
@@ -27,14 +35,28 @@
     "concurrently": "^4.0.1",
     "css-loader": "^1.0.0",
     "electron": "^3.0.4",
+    "electron-builder": "^20.29.0",
     "electron-devtools-installer": "^2.2.4",
-    "electron-packager": "^12.2.0",
     "fable-loader": "^2.0.0",
+    "jquery": "^3.3.1",
     "loglevel": "^1.5.1",
     "remotedev": "^0.2.7",
     "style-loader": "^0.23.1",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
+  },
+  "build": {
+    "appId": "at.walternative.elmishelectron",
+    "productName": "ElmishElectron",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "app/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    }
   }
 }
