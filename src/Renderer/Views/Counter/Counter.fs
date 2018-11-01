@@ -38,14 +38,14 @@ let counterView =
     lazyView (fun model -> RS.badge [ RSP.Color(RSP.Dark); RSP.Pill true ] [ R.str (sprintf "%i" model.Count) ])
 
 let view (model : Model) (dispatch : Message -> unit) =
-    RS.container [ RSP.Fluid(true) ] [
+    R.section [] [
         RS.alert
             [ RSP.IsOpen model.IsAlertVisible
-              RSP.Color(RSP.Warning)
+              RSP.Color(RSP.Dark)
               RSP.Toggle (fun _ -> dispatch HideAlert) ] [
             R.h4 [ RP.ClassName "alert-heading" ] [
                 R.str "Hi, there! "
-                RS.badge [ RSP.Color(RSP.Danger) ] [ R.str "1337" ]
+                RS.badge [ RSP.Color(RSP.Light) ] [ R.str "1337" ]
             ]
             R.hr []
             R.str "This is a warning with "
@@ -57,9 +57,9 @@ let view (model : Model) (dispatch : Message -> unit) =
             counterView model
         ]
         R.br []
-        RS.button [ RP.OnClick (increase dispatch); RSP.Color(RSP.Primary) ] [ R.str "Increase" ]
+        RS.button [ RP.OnClick (increase dispatch); RSP.Color(RSP.Light) ] [ R.str "Increase" ]
         R.span [] [ R.str " "]
-        RS.button [ RP.OnClick (fun _ -> dispatch Decrease); RSP.Color(RSP.Secondary) ] [ R.str "Decrease" ]
+        RS.button [ RP.OnClick (fun _ -> dispatch Decrease); RSP.Color(RSP.Dark) ] [ R.str "Decrease" ]
         R.span [] [ R.str " "]
-        RS.button [ RP.OnClick (fun _ -> dispatch ShowAlert) ; RSP.Color(RSP.Success) ] [ R.str "Show Alert" ]
+        RS.button [ RP.OnClick (fun _ -> dispatch ShowAlert) ; RSP.Color(RSP.Secondary) ] [ R.str "Show Alert" ]
     ]
