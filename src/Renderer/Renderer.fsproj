@@ -3,6 +3,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Routing.fs" />
+    <Compile Include="Views/Counter/Counter.fs" />
     <Compile Include="Renderer.fs" />
   </ItemGroup>
   <ItemGroup>
