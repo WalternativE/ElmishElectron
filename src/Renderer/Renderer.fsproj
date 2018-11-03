@@ -1,16 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Routing.fs" />
-    <Compile Include="Views/Counter/Counter.fs" />
-    <Compile Include="Renderer.fs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\FsReactstrap\FsReactstrap.fsproj">
       <Name>FsElectron.fsproj</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FsCoreuiReact\FsCoreuiReact.fsproj">
+      <Name>FsCoreuiReact.fsproj</Name> 
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Routing.fs" />
+    <Compile Include="Views/Counter/Counter.fs" />
+    <Compile Include="Renderer.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

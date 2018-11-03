@@ -4,8 +4,9 @@ open Elmish
 open Elmish.React
 open Fable.Core.JsInterop
 
-importAll "../../node_modules/bootstrap/dist/css/bootstrap.min.css"
-importAll "./assets/renderer.css"
+// importAll "../../node_modules/bootstrap/dist/css/bootstrap.min.css"
+// importAll "./assets/renderer.css"
+importAll "./assets/styles/app.scss"
 
 type PageModel =
     | CounterPage of Counter.Model
@@ -44,6 +45,8 @@ module R = Fable.Helpers.React
 module RP = Fable.Helpers.React.Props
 module RS = FsReactstrap
 module RSP = FsReactstrap.Props
+module RC = FsCoreuiReact
+module RCP = FsCoreuiReact.Props
 
 let viewContent model dispatch =
     match model.PageModel with
@@ -53,39 +56,23 @@ let viewContent model dispatch =
         R.h1 [] [ R.str "Hello from alerts" ]
 
 let view (model : Model) (dispatch : Msg -> unit) =
-    R.div [] [
-        RS.navbar
-            [ RSP.RSNavbarProps.Dark true
-              RSP.Color(RSP.Dark)
-              RSP.Fixed(RSP.Top)
-              RP.ClassName "flex-md-nowrap shadow navbar-expand-md" ] [
-            RS.navbarBrand [ Routing.href Routing.Counter; RP.ClassName "col-sm-3 col-md-2 mr-0" ] [ R.str "ElmishReact" ]
-            RS.input [ RSP.Type(RSP.Text); RP.ClassName "form-control-dark w-100" ]
-            RS.nav [ RSP.RSNavProps.Navbar; RP.Class "px-3" ] [
-                RS.navItem [ RP.ClassName "text-nowrap" ] [
-                    RS.navLink [ RP.Href "#" ] [ R.str "Login" ]
+    R.div [ RP.ClassName "app" ] [
+        RC.header [] []
+        R.div [ RP.ClassName "app-body" ] [
+            RC.sidebar [] [
+                RC.sidebarHeader [] []
+                RC.sidebarForm [] []
+                RC.sidebarFooter [] []
+                RC.sidebarMinimizer [] []
+            ]
+            R.main [ RP.ClassName "main" ] [
+                RS.container [ RSP.Fluid true ] [
+
                 ]
             ]
+            RC.aside [ RCP.Fixed true ] []
         ]
-        RS.container [ RSP.Fluid(true) ] [
-            RS.row [] [
-                RS.nav [ RP.ClassName "col-md-2 d-none d-md-block bg-light sidebar"; RSP.Tag "div" ] [
-                    R.div [ RP.ClassName "sidebar-sticky" ] [
-                        RS.nav [ RP.ClassName "flex-column"] [
-                            RS.navItem [ ] [
-                                RS.navLink [ Routing.href Routing.Counter ] [ R.str "Counter" ]
-                            ]
-                            RS.navItem [ ] [
-                                RS.navLink [ Routing.href Routing.Alerts] [ R.str "Alerts" ]
-                            ]
-                        ]
-                    ]
-                ]
-                R.main [ RP.ClassName "col-md-9 ml-sm-auto col-lg-10 px-4"; RP.Role "main" ] [
-                    viewContent model dispatch
-                ]
-            ]
-        ]
+        RC.footer [] []
     ]
 
 #if DEBUG
@@ -107,3 +94,39 @@ Program.mkProgram init update view
 |> Program.withConsoleTrace
 #endif
 |> Program.run
+
+// let view (model : Model) (dispatch : Msg -> unit) =
+//     R.div [] [
+//         RS.navbar
+//             [ RSP.RSNavbarProps.Dark true
+//               RSP.Color(RSP.Dark)
+//               RSP.Fixed(RSP.Top)
+//               RP.ClassName "flex-md-nowrap shadow navbar-expand-md" ] [
+//             RS.navbarBrand [ Routing.href Routing.Counter; RP.ClassName "col-sm-3 col-md-2 mr-0" ] [ R.str "ElmishReact" ]
+//             RS.input [ RSP.Type(RSP.Text); RP.ClassName "form-control-dark w-100" ]
+//             RS.nav [ RSP.RSNavProps.Navbar; RP.Class "px-3" ] [
+//                 RS.navItem [ RP.ClassName "text-nowrap" ] [
+//                     RS.navLink [ RP.Href "#" ] [ R.str "Login" ]
+//                 ]
+//             ]
+//         ]
+//         RS.container [ RSP.Fluid(true) ] [
+//             RS.row [] [
+//                 RS.nav [ RP.ClassName "col-md-2 d-none d-md-block bg-light sidebar"; RSP.Tag "div" ] [
+//                     R.div [ RP.ClassName "sidebar-sticky" ] [
+//                         RS.nav [ RP.ClassName "flex-column"] [
+//                             RS.navItem [ ] [
+//                                 RS.navLink [ Routing.href Routing.Counter ] [ R.str "Counter" ]
+//                             ]
+//                             RS.navItem [ ] [
+//                                 RS.navLink [ Routing.href Routing.Alerts] [ R.str "Alerts" ]
+//                             ]
+//                         ]
+//                     ]
+//                 ]
+//                 R.main [ RP.ClassName "col-md-9 ml-sm-auto col-lg-10 px-4"; RP.Role "main" ] [
+//                     viewContent model dispatch
+//                 ]
+//             ]
+//         ]
+//     ]
