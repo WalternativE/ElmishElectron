@@ -86,10 +86,21 @@ options.secure <- Some true
 Electron.protocol.registerStandardSchemes(ResizeArray<_>(["app"]), options)
 let createMainWindow () =
     let options = createEmpty<BrowserWindowConstructorOptions>
-    options.width <- Some 800.
-    options.height <- Some 600.
-    options.autoHideMenuBar <- Some true
+    options.autoHideMenuBar <- Some false
+
+    #if DEBUG
+    options.show <- Some false
+    #else
+    options.show <- Some true
+    #endif
+
     let window = Electron.BrowserWindow.Create(options)
+    window.maximize ()
+
+    window.once(
+        "ready-to-show",
+        (unbox (fun () -> window.show ()))
+    ) |> ignore
 
     #if DEBUG
     window.loadURL("http://localhost:9000/index.html")
@@ -105,9 +116,6 @@ let createMainWindow () =
         // when you should delete the corresponding element.
         mainWindow <- Option.None
     )) |> ignore
-
-    // Maximize the window
-    window.maximize()
 
     #if DEBUG
     installExtension !![| reactDeveloperTools; reduxDeveloperTools |]

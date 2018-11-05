@@ -25,9 +25,9 @@ module Props =
 
     // TODO: see if I can use the Component prop
     type Route =
-        { Path : string
-          Exact : bool
-          Name : string }
+        { path : string
+          exact : bool
+          name : string }
 
     type BreadcrumpProps =
         | ClassName of string
@@ -48,10 +48,10 @@ module Props =
         | Direction of string // TODO find out directions
 
     type BrandOptions =
-        { Src : ReactElement // I think this should be a SVG react element
-          Width : int
-          Height : int
-          Alt : string }
+        { src : ReactElement // I think this should be a SVG react element
+          width : int
+          height : int
+          alt : string }
 
     type NavbarBrandProps =
         | Tag of string
@@ -88,16 +88,16 @@ module Props =
         | Type of string // TODO have to research which types are allowed
 
     type BadgeConfig =
-        { Variant : string
-          Text : string
-          Class : string option }
+        { variant : string
+          text : string
+          ``class`` : string option }
 
     type NavConfig =
-        { Name : string
-          Url : string
-          Icon : string option
-          Class : string option
-          Badge : BadgeConfig }
+        { name : string
+          url : string
+          icon : string option
+          ``class`` : string option
+          badge : BadgeConfig }
 
     type SidebarNavProps =
         | ClassName of string

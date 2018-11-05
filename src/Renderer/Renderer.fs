@@ -3,6 +3,7 @@
 open Elmish
 open Elmish.React
 open Fable.Core.JsInterop
+open Fable.Import.React
 
 // importAll "../../node_modules/bootstrap/dist/css/bootstrap.min.css"
 // importAll "./assets/renderer.css"
@@ -55,9 +56,57 @@ let viewContent model dispatch =
     | AlertsPage ->
         R.h1 [] [ R.str "Hello from alerts" ]
 
+let brandImage = importAll<ReactElement> "./assets/img/brand/logo.svg"
+let smallBrandImage = importAll<ReactElement> "./assets/img/brand/sygnet.svg"
+
+let headerFragment =
+    let fullBrandProps : RCP.BrandOptions =
+        { src = brandImage
+          width = 89
+          height = 25
+          alt = "CoreUI Logo" }
+
+    let minimizedBrandProps : RCP.BrandOptions =
+        { src = smallBrandImage
+          width = 30
+          height = 30
+          alt = "CoreUI Logo" }
+
+    R.fragment [] [
+        RC.sidebarToggler
+            [ RCP.SidebarTogglerProps.ClassName "d-lg-none"
+              RCP.SidebarTogglerProps.Display "md"
+              RCP.SidebarTogglerProps.Mobile true ] []
+        RC.navbarBrand [ RCP.Brand fullBrandProps; RCP.Minimized minimizedBrandProps ] []
+        RC.sidebarToggler
+            [ RCP.SidebarTogglerProps.ClassName "d-md-down-none"
+              RCP.SidebarTogglerProps.Display "lg" ] []
+        
+        RS.nav [ RP.ClassName "d-md-down-none"; RSP.Navbar ] [
+            RS.navItem [ RP.ClassName "px-3" ] [
+                RS.navLink [ RP.Href "#" ] [ R.str "Dashboard" ]
+            ]
+            RS.navItem [ RP.ClassName "px-3" ] [
+                RS.navLink [ RP.Href "#" ] [ R.str "Users" ]
+            ]
+            RS.navItem [ RP.ClassName "px-3" ] [
+                RS.navLink [ RP.Href "#" ] [ R.str "Settings" ]
+            ]
+        ]
+
+        RS.nav [ RP.ClassName "ml-auto"; RSP.Navbar ] [
+            RS.navItem [ RP.ClassName "d-md-down-none" ] [
+                RS.navLink [ RP.Href "#" ] [
+                    R.i [ RP.ClassName "icon-bell" ] []
+                    RS.badge [ RSP.Pill true; RSP.RSBadgeProps.Color RSP.Danger ] [ R.str "5" ]
+                ]
+            ]
+        ]
+    ]
+
 let view (model : Model) (dispatch : Msg -> unit) =
     R.div [ RP.ClassName "app" ] [
-        RC.header [] []
+        RC.header [] [ headerFragment ]
         R.div [ RP.ClassName "app-body" ] [
             RC.sidebar [] [
                 RC.sidebarHeader [] []
