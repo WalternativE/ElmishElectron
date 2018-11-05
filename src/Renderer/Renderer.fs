@@ -5,8 +5,6 @@ open Elmish.React
 open Fable.Core.JsInterop
 open Fable.Import.React
 
-// importAll "../../node_modules/bootstrap/dist/css/bootstrap.min.css"
-// importAll "./assets/renderer.css"
 importAll "./assets/styles/app.scss"
 
 type PageModel =
@@ -52,9 +50,13 @@ module RCP = FsCoreuiReact.Props
 let viewContent model dispatch =
     match model.PageModel with
     | CounterPage cpm ->
-        Counter.view cpm (CounterMsg >> dispatch)
+        R.fragment [] [
+            Counter.view cpm (CounterMsg >> dispatch)
+        ]
     | AlertsPage ->
-        R.h1 [] [ R.str "Hello from alerts" ]
+        R.fragment [] [
+            R.h1 [] [ R.str "Hello from alerts" ]
+        ]
 
 let brandImage = importAll<ReactElement> "./assets/img/brand/logo.svg"
 let smallBrandImage = importAll<ReactElement> "./assets/img/brand/sygnet.svg"
@@ -84,10 +86,10 @@ let headerFragment =
         
         RS.nav [ RP.ClassName "d-md-down-none"; RSP.Navbar ] [
             RS.navItem [ RP.ClassName "px-3" ] [
-                RS.navLink [ RP.Href "#" ] [ R.str "Dashboard" ]
+                RS.navLink [ Routing.href Routing.Counter ] [ R.str "Dashboard" ]
             ]
             RS.navItem [ RP.ClassName "px-3" ] [
-                RS.navLink [ RP.Href "#" ] [ R.str "Users" ]
+                RS.navLink [ Routing.href Routing.Alerts ] [ R.str "Users" ]
             ]
             RS.navItem [ RP.ClassName "px-3" ] [
                 RS.navLink [ RP.Href "#" ] [ R.str "Settings" ]
@@ -99,6 +101,32 @@ let headerFragment =
                 RS.navLink [ RP.Href "#" ] [
                     R.i [ RP.ClassName "icon-bell" ] []
                     RS.badge [ RSP.Pill true; RSP.RSBadgeProps.Color RSP.Danger ] [ R.str "5" ]
+                ]
+            ]
+            RS.navItem [ RP.ClassName "d-md-down-none" ] [
+                RS.navLink [ RP.Href "#" ] [
+                    R.i [ RP.ClassName "icon-list" ] []
+                ]
+            ]
+            RS.navItem [ RP.ClassName "d-md-down-none" ] [
+                RS.navLink [ RP.Href "#" ] [
+                    R.i [ RP.ClassName "icon-location-pin" ] []
+                ]
+            ]
+
+            RC.headerDropdown [ RCP.Direction "down" ] [
+                RS.dropdownToggle [ RSP.RSDropdownToggleProps.Nav ] [
+                    R.img [ RP.Src "https://api.adorable.io/avatars/150/bobben.png"; RP.ClassName "img-avatar" ]
+                ]
+                RS.dropdownMenu [ RSP.Right ] [
+                    RS.dropdownItem [ RSP.Header; RSP.RSDropdownItemProps.Tag "div"; RSP.RSDropdownItemProps.ClassName "text-center" ] [
+                        R.strong [] [ R.str "Account" ]
+                    ]
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-bell-o" ] []
+                        R.str " Updates"
+                        RS.badge [ RSP.RSBadgeProps.Color RSP.Info ] [ R.str "42" ]
+                    ]
                 ]
             ]
         ]
@@ -115,8 +143,8 @@ let view (model : Model) (dispatch : Msg -> unit) =
                 RC.sidebarMinimizer [] []
             ]
             R.main [ RP.ClassName "main" ] [
-                RS.container [ RSP.Fluid true ] [
-
+                RS.container [ RSP.Fluid true; RP.Style [ RP.PaddingTop 20 ] ] [
+                    viewContent model dispatch
                 ]
             ]
             RC.aside [ RCP.Fixed true ] []
@@ -143,39 +171,3 @@ Program.mkProgram init update view
 |> Program.withConsoleTrace
 #endif
 |> Program.run
-
-// let view (model : Model) (dispatch : Msg -> unit) =
-//     R.div [] [
-//         RS.navbar
-//             [ RSP.RSNavbarProps.Dark true
-//               RSP.Color(RSP.Dark)
-//               RSP.Fixed(RSP.Top)
-//               RP.ClassName "flex-md-nowrap shadow navbar-expand-md" ] [
-//             RS.navbarBrand [ Routing.href Routing.Counter; RP.ClassName "col-sm-3 col-md-2 mr-0" ] [ R.str "ElmishReact" ]
-//             RS.input [ RSP.Type(RSP.Text); RP.ClassName "form-control-dark w-100" ]
-//             RS.nav [ RSP.RSNavProps.Navbar; RP.Class "px-3" ] [
-//                 RS.navItem [ RP.ClassName "text-nowrap" ] [
-//                     RS.navLink [ RP.Href "#" ] [ R.str "Login" ]
-//                 ]
-//             ]
-//         ]
-//         RS.container [ RSP.Fluid(true) ] [
-//             RS.row [] [
-//                 RS.nav [ RP.ClassName "col-md-2 d-none d-md-block bg-light sidebar"; RSP.Tag "div" ] [
-//                     R.div [ RP.ClassName "sidebar-sticky" ] [
-//                         RS.nav [ RP.ClassName "flex-column"] [
-//                             RS.navItem [ ] [
-//                                 RS.navLink [ Routing.href Routing.Counter ] [ R.str "Counter" ]
-//                             ]
-//                             RS.navItem [ ] [
-//                                 RS.navLink [ Routing.href Routing.Alerts] [ R.str "Alerts" ]
-//                             ]
-//                         ]
-//                     ]
-//                 ]
-//                 R.main [ RP.ClassName "col-md-9 ml-sm-auto col-lg-10 px-4"; RP.Role "main" ] [
-//                     viewContent model dispatch
-//                 ]
-//             ]
-//         ]
-//     ]

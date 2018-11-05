@@ -114,6 +114,32 @@ module Props =
         | Lg of string
         | Xl of string
 
+    type RSDropdownToggleProps =
+        | Caret
+        | Color of Color
+        | ClassName of string
+        | Disabled
+        | OnClick of (unit -> unit) // TODO research method signature
+        | [<CompiledName("aria-haspopup")>]AriaHasPopup
+        | Split
+        | Nav
+
+    type RSDropdownMenuProps =
+        | Tag of string
+        | Right
+        | Flip
+        | Persist
+
+    type RSDropdownItemProps =
+        | Active
+        | Disabled
+        | Divider
+        | Tag of string
+        | Header
+        | OnClick of (unit -> unit) // TODO research method signature
+        | ClassName of string
+        | Toggle
+
 let inline alert (props : IProp list) (elems : ReactElement list) : ReactElement =
     ofImport "Alert" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
 
@@ -152,3 +178,12 @@ let inline row (props : RSRowProps list) (elems : ReactElement list) : ReactElem
 
 let inline col (props : RSColProps list) (elems : ReactElement list) : ReactElement =
     ofImport "Col" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
+
+let inline dropdownToggle (props : RSDropdownToggleProps list) (elems : ReactElement list) : ReactElement =
+    ofImport "DropdownToggle" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
+
+let inline dropdownMenu (props : RSDropdownMenuProps list) (elems : ReactElement list) : ReactElement =
+    ofImport "DropdownMenu" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
+
+let inline dropdownItem (props : RSDropdownItemProps list) (elems : ReactElement list) : ReactElement =
+    ofImport "DropdownItem" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
