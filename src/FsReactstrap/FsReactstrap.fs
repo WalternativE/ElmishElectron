@@ -140,6 +140,30 @@ module Props =
         | ClassName of string
         | Toggle
 
+    type RSTabContentProps =
+        | Tag of string
+        | ActiveTab of string // TODO maybe make this another object type
+        | ClassName of string
+
+    type RSTabPaneProps =
+        | Tag of string
+        | ClassName of string
+        | TabId of string
+
+    type RSListGroupProps =
+        | Flush
+        | ClassName of string
+        | Tag of string
+
+    type RSListGroupItemProps =
+        | Tag of string
+        | Active
+        | Disabled
+        | Color of Color
+        | Action
+        | ClassName of string
+            interface IProp
+
 let inline alert (props : IProp list) (elems : ReactElement list) : ReactElement =
     ofImport "Alert" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
 
@@ -187,3 +211,15 @@ let inline dropdownMenu (props : RSDropdownMenuProps list) (elems : ReactElement
 
 let inline dropdownItem (props : RSDropdownItemProps list) (elems : ReactElement list) : ReactElement =
     ofImport "DropdownItem" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
+
+let inline tabContent (props : RSTabContentProps list) (elems : ReactElement list) : ReactElement =
+    ofImport "TabContent" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
+
+let inline tabPane (props : RSTabPaneProps list) (elems : ReactElement list) : ReactElement =
+    ofImport "TabPane" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
+
+let inline listGroup (props : RSListGroupProps list) (elems : ReactElement list) : ReactElement =
+    ofImport "ListGroup" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems
+
+let inline listGroupItem (props : IProp list) (elems : ReactElement list) : ReactElement =
+    ofImport "ListGroupItem" "reactstrap" (keyValueList CaseRules.LowerFirst props) elems

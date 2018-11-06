@@ -11,11 +11,18 @@ type PageModel =
     | CounterPage of Counter.Model
     | AlertsPage
 
+type ActiveTab =
+    | One
+    | Two
+    | Three
+
 type Model =
-    { PageModel : PageModel }
+    { PageModel : PageModel
+      ActiveTab : ActiveTab }
 
 type Msg =
     | CounterMsg of Counter.Message
+    | ChangeAsideTab of ActiveTab
 
 let urlUpdate (result : Routing.Route option) model =
     match result with
@@ -29,7 +36,8 @@ let urlUpdate (result : Routing.Route option) model =
 
 let init result =
     let cm = Counter.init ()
-    let model = { PageModel = CounterPage cm }
+    let model = { PageModel = CounterPage cm
+                  ActiveTab = One }
 
     urlUpdate result model
 
@@ -39,6 +47,8 @@ let update (msg : Msg) (model : Model) =
         let cm = Counter.update msg mdl
         { model with PageModel = CounterPage cm}, Cmd.none
     | CounterMsg msg, _ -> model, Cmd.none
+    | ChangeAsideTab nowActive, _ ->
+        { model with ActiveTab = nowActive }, Cmd.none
 
 module R = Fable.Helpers.React
 module RP = Fable.Helpers.React.Props
@@ -46,6 +56,13 @@ module RS = FsReactstrap
 module RSP = FsReactstrap.Props
 module RC = FsCoreuiReact
 module RCP = FsCoreuiReact.Props
+
+let randomAvatar () =
+    let names =
+        [ "bobben"; "thommy"; "georg"; "maria"; "clara"; "mahula"; "elif"; "muammer"
+          "paul"; "pavel"; "vitezlav"; "jesus"; "thedevil"; "bigKahuna"; "someone"]
+    let name = names |> List.sortBy (fun _ -> System.Guid.NewGuid()) |> List.head
+    sprintf "https://api.adorable.io/avatars/150/%s.png" name
 
 let viewContent model dispatch =
     match model.PageModel with
@@ -116,7 +133,7 @@ let headerFragment =
 
             RC.headerDropdown [ RCP.Direction "down" ] [
                 RS.dropdownToggle [ RSP.RSDropdownToggleProps.Nav ] [
-                    R.img [ RP.Src "https://api.adorable.io/avatars/150/bobben.png"; RP.ClassName "img-avatar" ]
+                    R.img [ RP.Src (randomAvatar ()); RP.ClassName "img-avatar" ]
                 ]
                 RS.dropdownMenu [ RSP.Right ] [
                     RS.dropdownItem [ RSP.Header; RSP.RSDropdownItemProps.Tag "div"; RSP.RSDropdownItemProps.ClassName "text-center" ] [
@@ -127,14 +144,138 @@ let headerFragment =
                         R.str " Updates"
                         RS.badge [ RSP.RSBadgeProps.Color RSP.Info ] [ R.str "42" ]
                     ]
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-envelope-o" ] []
+                        R.str " Messages"
+                        RS.badge [ RSP.RSBadgeProps.Color RSP.Success ] [ R.str "42" ]
+                    ]
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-tasks" ] []
+                        R.str " Tasks"
+                        RS.badge [ RSP.RSBadgeProps.Color RSP.Danger ] [ R.str "42" ]
+                    ]
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-comments" ] []
+                        R.str " Comments"
+                        RS.badge [ RSP.RSBadgeProps.Color RSP.Warning ] [ R.str "42" ]
+                    ]
+                    RS.dropdownItem
+                        [ RSP.RSDropdownItemProps.Tag "div"
+                          RSP.Header
+                          RSP.RSDropdownItemProps.ClassName "text-center" ] [
+                              R.strong [] [ R.str "Settings" ]
+                    ]
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-user" ] []
+                        R.str " Profile"
+                    ]
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-wrench" ] []
+                        R.str " Settings"
+                    ]
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-usd" ] []
+                        R.str " Payment"
+                    ]
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-file" ] []
+                        R.str " Projects"
+                    ]
+                    RS.dropdownItem [ RSP.Divider ] []
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-shield" ] []
+                        R.str " Lock Account"
+                    ]
+                    RS.dropdownItem [ ] [
+                        R.i [ RP.ClassName "fa fa-lock" ] []
+                        R.str " Logout"
+                    ]
                 ]
+            ]
+        ]
+        RC.asideToggler [ RCP.AsideTogglerProps.ClassName "d-md-down-none" ] []
+    ]
+
+let mainAside model dispatch =
+    let (one, two, three) =
+        match model.ActiveTab with
+        | One -> true, false, false
+        | Two -> false, true, false
+        | Three -> false, false, true
+
+    let isActive active : RP.IProp list =
+        if active then [ RP.ClassName "active"] else []
+
+    let tabToString (tab : ActiveTab) =
+        match tab with
+        | One -> "one"
+        | Two -> "two"
+        | Three -> "three"
+
+    R.fragment [] [
+        RS.nav [ RSP.Tabs ] [
+            RS.navLink
+                [ yield! (isActive one)
+                  yield RP.OnClick (fun _ -> ChangeAsideTab One |> dispatch ) ] [
+                R.i [ RP.ClassName "icon-list" ] []
+            ]
+            RS.navLink
+                [ yield! (isActive two)
+                  yield RP.OnClick (fun _ -> ChangeAsideTab Two |> dispatch ) ] [
+                R.i [ RP.ClassName "icon-speech" ] []
+            ]
+            RS.navLink
+                [ yield! (isActive three)
+                  yield RP.OnClick (fun _ -> ChangeAsideTab Three |> dispatch ) ] [
+                R.i [ RP.ClassName "icon-settings" ] []
+            ]
+        ]
+        RS.tabContent [ RSP.ActiveTab (tabToString model.ActiveTab) ] [
+            RS.tabPane [ RSP.TabId (tabToString One) ] [
+                RS.listGroup
+                    [ RSP.RSListGroupProps.ClassName "list-group-accent"
+                      RSP.RSListGroupProps.Tag "div" ] [
+                      RS.listGroupItem
+                        [ RSP.RSListGroupItemProps.ClassName "list-group-item-accent-secondary bg-light text-center font-weight-bold text-muted text-uppercase small" ] [
+                            R.str "Today"
+                      ]
+                      RS.listGroupItem
+                        [ RSP.Action
+                          RSP.RSListGroupItemProps.Tag "a"
+                          RP.Href "#"
+                          RP.ClassName "list-group-item-accent-warning list-group-item-divider" ] [
+                              R.div [ RP.ClassName "avatar float-right" ] [
+                                  R.img [ RP.ClassName "img-avatar"
+                                          RP.Src (randomAvatar ())
+                                          RP.Alt "admin@bootstrapmaster.com" ]
+                              ]
+                              R.div [] [
+                                  R.str "Meeting with"
+                                  R.strong [ ] [ R.str " Lucas" ]
+                              ]
+                              R.small [ RP.ClassName "text-muted mr-3" ] [
+                                  R.i [ RP.ClassName "icon-calendar" ] [ ]
+                                  R.str "  1 - 3pm"
+                              ]
+                              R.small [ RP.ClassName "text-muted" ] [
+                                  R.i [ RP.ClassName "icon-location-pin" ] [ ]
+                                  R.str " Palo Alto, CA"
+                              ]
+                      ]
+                ]
+            ]
+            RS.tabPane [ RSP.TabId (tabToString Two) ] [
+                R.h4 [] [ R.str "two" ]
+            ]
+            RS.tabPane [ RSP.TabId (tabToString Three) ] [
+                R.h4 [] [ R.str "three" ]
             ]
         ]
     ]
 
 let view (model : Model) (dispatch : Msg -> unit) =
     R.div [ RP.ClassName "app" ] [
-        RC.header [] [ headerFragment ]
+        RC.header [ RCP.HeaderProps.Fixed true ] [ headerFragment ]
         R.div [ RP.ClassName "app-body" ] [
             RC.sidebar [] [
                 RC.sidebarHeader [] []
@@ -147,7 +288,9 @@ let view (model : Model) (dispatch : Msg -> unit) =
                     viewContent model dispatch
                 ]
             ]
-            RC.aside [ RCP.Fixed true ] []
+            RC.aside [ RCP.Fixed true ] [
+                mainAside model dispatch
+            ]
         ]
         RC.footer [] []
     ]
