@@ -212,6 +212,11 @@ let mainAside model dispatch =
         | Two -> "two"
         | Three -> "three"
 
+    let generateNTimes n (elem : unit -> ReactElement) =
+        List.init n (fun i -> 
+            R.fragment [ RP.Key (string i) ] [ elem () ] )
+        |> R.ofList
+
     R.fragment [] [
         RS.nav [ RSP.Tabs ] [
             RS.navLink
@@ -235,47 +240,90 @@ let mainAside model dispatch =
                 RS.listGroup
                     [ RSP.RSListGroupProps.ClassName "list-group-accent"
                       RSP.RSListGroupProps.Tag "div" ] [
-                      RS.listGroupItem
-                        [ RSP.RSListGroupItemProps.ClassName "list-group-item-accent-secondary bg-light text-center font-weight-bold text-muted text-uppercase small" ] [
-                            R.str "Today"
-                      ]
-                      RS.listGroupItem
-                        [ RSP.Action
-                          RSP.RSListGroupItemProps.Tag "a"
-                          RP.Href "#"
-                          RP.ClassName "list-group-item-accent-warning list-group-item-divider" ] [
-                              R.div [ RP.ClassName "avatar float-right" ] [
-                                  R.img [ RP.ClassName "img-avatar"
-                                          RP.Src (randomAvatar ())
-                                          RP.Alt "admin@bootstrapmaster.com" ]
-                              ]
-                              R.div [] [
-                                  R.str "Meeting with"
-                                  R.strong [ ] [ R.str " Lucas" ]
-                              ]
-                              R.small [ RP.ClassName "text-muted mr-3" ] [
-                                  R.i [ RP.ClassName "icon-calendar" ] [ ]
-                                  R.str "  1 - 3pm"
-                              ]
-                              R.small [ RP.ClassName "text-muted" ] [
-                                  R.i [ RP.ClassName "icon-location-pin" ] [ ]
-                                  R.str " Palo Alto, CA"
-                              ]
-                      ]
+                          RS.listGroupItem
+                            [ RSP.RSListGroupItemProps.ClassName "list-group-item-accent-secondary bg-light text-center font-weight-bold text-muted text-uppercase small" ] [
+                                R.str "Today"
+                          ]
+                          RS.listGroupItem
+                            [ RSP.Action
+                              RSP.RSListGroupItemProps.Tag "a"
+                              RP.Href "#"
+                              RP.ClassName "list-group-item-accent-warning list-group-item-divider" ] [
+                                  R.div [ RP.ClassName "avatar float-right" ] [
+                                      R.img [ RP.ClassName "img-avatar"
+                                              RP.Src (randomAvatar ())
+                                              RP.Alt "admin@bootstrapmaster.com" ]
+                                  ]
+                                  R.div [] [
+                                      R.str "Meeting with"
+                                      R.strong [ ] [ R.str " Lucas" ]
+                                  ]
+                                  R.small [ RP.ClassName "text-muted mr-3" ] [
+                                      R.i [ RP.ClassName "icon-calendar" ] [ ]
+                                      R.str "  1 - 3pm"
+                                  ]
+                                  R.small [ RP.ClassName "text-muted" ] [
+                                      R.i [ RP.ClassName "icon-location-pin" ] [ ]
+                                      R.str " Palo Alto, CA"
+                                  ]
+                          ]
+                          RS.listGroupItem 
+                            [ RSP.RSListGroupItemProps.ClassName "list-group-item-accent-secondary bg-light text-center font-weight-bold text-muted text-uppercase small" ]
+                            [ R.str "Tomorrow" ]
+                          RS.listGroupItem
+                            [ RSP.Action
+                              RP.Href "#"
+                              RP.ClassName "list-group-item-accent-danger list-group-item-divider" ] [
+                                  R.div [] [ R.str "New UI project - "; R.strong [] [ R.str "deadline" ] ]
+                                  R.small [ RP.ClassName "text-muted mr-3" ] [
+                                      R.i [ RP.ClassName "icon-calendar" ] [ ]
+                                      R.str "  10 - 11pm"
+                                  ]
+                                  R.small [ RP.ClassName "text-muted" ] [
+                                      R.i [ RP.ClassName "icon-home" ] [ ]
+                                      R.str " creativeLabs HQ"
+                                  ]
+                                  R.div [ RP.ClassName "avatars-stack mt-2" ] [
+                                      (fun _ ->
+                                          R.div [ RP.ClassName "avatar avatar-xs" ] [
+                                              R.img [ RP.ClassName "img-avatar"; RP.Src (randomAvatar ()) ]
+                                          ]
+                                      ) |> generateNTimes 5
+                                  ]
+                          ]
                 ]
             ]
-            RS.tabPane [ RSP.TabId (tabToString Two) ] [
-                R.h4 [] [ R.str "two" ]
+
+            RS.tabPane [ RSP.TabId (tabToString Two); RSP.RSTabPaneProps.ClassName "p-3" ] [
+                (fun _ ->
+                    R.div [ RP.ClassName "message" ] [
+                        R.div [ RP.ClassName "py-3 pb-5 mr-3 float-left" ] [
+                            R.div [ RP.ClassName "avatar" ] [
+                                R.img [ RP.ClassName "img-avatar"; RP.Src (randomAvatar ()) ]
+                                R.span [ RP.ClassName "avatar-status badge-success" ] []
+                            ]
+                        ]
+                        R.div [] [
+                            R.small [ RP.ClassName "text-muted" ] [ R.str "Svarti Barlfast" ]
+                            R.small [ RP.ClassName "text-muted float-right mt-1"] [ R.str "10:42 PM" ]
+                        ]
+                        R.div [ RP.ClassName "text-truncate font-weight-bold" ] [ R.str "Lorem ipsum dolor sit amet" ]
+                        R.small [ RP.ClassName "text-muted" ] [
+                            R.str "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt..."
+                        ]
+                    ]
+                ) |> generateNTimes 15
             ]
-            RS.tabPane [ RSP.TabId (tabToString Three) ] [
-                R.h4 [] [ R.str "three" ]
+
+            RS.tabPane [ RSP.TabId (tabToString Three); RSP.RSTabPaneProps.ClassName "p-3" ] [
+                R.h6 [] [ R.str "Settings" ]
             ]
         ]
     ]
 
 let view (model : Model) (dispatch : Msg -> unit) =
     R.div [ RP.ClassName "app" ] [
-        RC.header [ RCP.HeaderProps.Fixed true ] [ headerFragment ]
+        RC.header [ RCP.HeaderProps.Fixed true; RCP.HeaderProps.ClassName "p-2" ] [ headerFragment ]
         R.div [ RP.ClassName "app-body" ] [
             RC.sidebar [] [
                 RC.sidebarHeader [] []
