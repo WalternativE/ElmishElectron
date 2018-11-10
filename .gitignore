@@ -200,3 +200,5 @@ project.lock.json
 app/*.js
 app/*.js.map
 app/assets/
+
+.ionide/
